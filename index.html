@@ -5,7 +5,7 @@
   <title>Мои проекты Scratch</title>
   <style>
     body {
-      background: black;
+      background: grey;
       color: white;
       font-family: Arial, sans-serif;
       padding: 25px;
@@ -14,12 +14,21 @@
       color: #5C6AC4;
     }
     button {
-      padding: 10px;
+      padding: 10px 15px;
       background: lime;
       border: none;
       cursor: pointer;
       font-size: 16px;
       margin-top: 10px;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s ease;
+    }
+    button img {
+      width: 30px;
+      height: auto;
+      margin-right: 8px;
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -28,44 +37,54 @@
   <p id="currentTime"></p>
 
   <h2>Счётчик кликов: <span id="clickCount">0</span></h2>
-  <button id="clickButton">Нажми меня!</button>
-
- <ul>
-  <li>
-    <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank" style="color: blue;">
-      dodje from a ball
-    </a>
-  </li>
-  <li>
-    <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank" style="color: blue;">
-      ghoul want eeeeat
-    </a>
-  </li>
-</ul>
-  <script> 
   
+  <button id="clickButton">
+    Нажми меня!
+  </button>
+
+  <ul>
+    <li>
+      <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank" style="color: blue;">
+        dodje from a ball
+      </a>
+    </li>
+    <li>
+      <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank" style="color: blue;">
+        ghoul want eeeeat
+      </a>
+    </li>
+  </ul>
+
+  <script> 
+    // Показываем текущее время
     function showTime() {
       document.getElementById('currentTime').textContent = new Date().toUTCString();
     }
     showTime();
     setInterval(showTime, 1000);
 
-    window.onload = () => {
-      let count = 0;
-      const clickCountElem = document.getElementById('clickCount');
-      const clickButton = document.getElementById('clickButton');
+    let count = 0;
+    const clickCountElem = document.getElementById('clickCount');
+    const clickButton = document.getElementById('clickButton');
 
-      clickButton.addEventListener('click', () => {
-        count++;
-        clickCountElem.textContent = count;
-      });
-    }
+    const colors = ['orange', 'red', 'yellow', 'pink', 'lime', 'cyan', 'magenta'];
+
+    clickButton.addEventListener('click', () => {
+      count++;
+      clickCountElem.textContent = count;
+
+      // Выбираем случайный цвет из массива
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      clickButton.style.backgroundColor = randomColor;
+
+      // Возвращаем исходный цвет через 300 миллисекунд
+      setTimeout(() => {
+        clickButton.style.backgroundColor = 'lime';
+      }, 300);
+    });
   </script>
 </body>
 </html>
-Its site was create for list of my games in the Scratch program,in next time were many games in this veb page
-
-
 
 
 

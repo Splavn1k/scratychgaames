@@ -3,229 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scratch Games + Click Challenge</title>
+<title>Scratch Games + Clicker Challenge</title>
 
 <style>
 body {
-  background: black;
-  color: white;
   font-family: Arial, sans-serif;
-  padding: 25px;
-  transition: 0.3s;
+  background: #111;
+  color: white;
+  padding: 20px;
 }
-
-h1 {
-  color: #5C6AC4;
-}
-
-/* Светлая тема */
-.light-theme {
-  background: white;
-  color: black;
-}
-
-.light-theme .games,
-.light-theme .leaderboard {
-  background: #eee;
-}
-
-.light-theme a {
-  color: darkblue;
-}
-
 button {
-  padding: 12px 18px;
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 18px;
+  cursor: pointer;
   background: lime;
   border: none;
-  cursor: pointer;
-  margin-top: 10px;
   border-radius: 8px;
+  transition: background-color 0.3s;
+}
+input {
   font-size: 16px;
-  position: relative;
-  overflow: hidden;
-  transition: background-color 0.3s ease, transform 0.1s;
+  padding: 8px;
 }
-
-button:active {
-  transform: scale(0.95);
+.leaderboard {
+  margin-top: 20px;
 }
-
-.games {
-  margin-top: 25px;
-  padding: 15px;
-  background: #111;
-  border-radius: 10px;
-}
-
 .games a {
   color: cyan;
-  text-decoration: none;
   display: block;
   margin: 8px 0;
+  text-decoration: none;
 }
-
 .games a:hover {
   text-decoration: underline;
-}
-
-.leaderboard {
-  margin-top: 25px;
-  padding: 15px;
-  background: #111;
-  border-radius: 10px;
-}
-
-/* +1 анимация */
-.plusOne {
-  position: absolute;
-  color: white;
-  font-weight: bold;
-  pointer-events: none;
-  animation: moveUp 0.8s ease-out forwards;
-  font-size: 18px;
-}
-
-@keyframes moveUp {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-40px); }
-}
-
-@media (max-width: 600px) {
-  body {
-    padding: 15px;
-  }
-  h1 {
-    font-size: 24px;
-  }
-  button {
-    width: 100%;
-    font-size: 18px;
-  }
-  h2 {
-    font-size: 20px;
-  }
 }
 </style>
 </head>
 <body>
 
-<h1>🔥 Scratch Games + Click Challenge</h1>
+<h1>🔥 Scratch Games + Clicker Challenge</h1>
 
-<button id="themeToggle">🌙 Сменить тему</button>
-
-<!-- ===== ТВОИ ИГРЫ ===== -->
+<!-- Игры -->
 <div class="games">
-  <h2>🎮 Мои проекты</h2>
-
-  <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank">
-    dodge from a ball
-  </a>
-
-  <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank">
-    ghoul want eeeeat
-  </a>
+  <h2>🎮 My Projects</h2>
+  <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank">dodge from a ball</a>
+  <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank">ghoul want eeeeat</a>
 </div>
 
-<!-- ===== КЛИК ЧЕЛЛЕНДЖ ===== -->
-<h2>Клики: <span id="clickCount">0</span></h2>
-<button id="clickButton">Нажми меня!</button>
-<button id="saveScore">💾 Сохранить результат</button>
+<!-- Clicker -->
+<h2>Clicks: <span id="clickCount">0</span></h2>
+<button id="clickButton">Click Me!</button>
+<br>
+<input id="playerName" placeholder="Enter your name" maxlength="15">
+<button id="saveScore">💾 Save Score</button>
 
-<!-- ===== ЛИДЕРБОРД ===== -->
+<!-- Leaderboard -->
 <div class="leaderboard">
-  <h3>🏆 Лидерборд (Топ 5)</h3>
+  <h2>🏆 Global Top 5</h2>
   <ol id="leaderboardList"></ol>
 </div>
 
+<!-- Firebase SDK (compat version) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-// ===== СЧЁТЧИК С ЦВЕТОМ И +1 =====
+// ====== Firebase Configuration ======
+const firebaseConfig = {
+  apiKey: "AIzaSyATCCc_waIdUupeRVla1VGA8koZKLEC9GY",
+  authDomain: "scratychgaaming.firebaseapp.com",
+  projectId: "scratychgaaming",
+  storageBucket: "scratychgaaming.firebasestorage.app",
+  messagingSenderId: "125051495935",
+  appId: "1:125051495935:web:52140518674ece65dd73ca",
+  measurementId: "G-JQ9YZSBNS2"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore(); // ← обязательно, чтобы db был определён
+
+// ===== Click Counter =====
 let count = 0;
-const clickCountElem = document.getElementById('clickCount');
-const clickButton = document.getElementById('clickButton');
+const clickCountElem = document.getElementById("clickCount");
+const clickButton = document.getElementById("clickButton");
 const colors = ['orange','red','yellow','pink','lime','cyan','magenta','white'];
 
-clickButton.addEventListener('click', (e) => {
+clickButton.addEventListener("click", () => {
   count++;
   clickCountElem.textContent = count;
 
   // Случайный цвет кнопки
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
   clickButton.style.backgroundColor = randomColor;
-
   setTimeout(() => {
     clickButton.style.backgroundColor = 'lime';
   }, 400);
-
-  // +1 анимация
-  const plus = document.createElement('span');
-  plus.className = 'plusOne';
-  plus.textContent = '+1';
-  clickButton.appendChild(plus);
-
-  // позиционируем в центре кнопки
-  plus.style.left = (clickButton.clientWidth/2 - 10) + 'px';
-  plus.style.top = '0px';
-
-  setTimeout(() => {
-    plus.remove();
-  }, 800);
 });
 
-// ===== ЛИДЕРБОРД =====
+// ===== Save Score =====
 const saveButton = document.getElementById("saveScore");
+const playerNameInput = document.getElementById("playerName");
 const leaderboardList = document.getElementById("leaderboardList");
 
-function loadLeaderboard() {
-  const scores = JSON.parse(localStorage.getItem("scores")) || [];
-  leaderboardList.innerHTML = "";
+saveButton.addEventListener("click", async () => {
+  const name = playerNameInput.value.trim();
+  if (!name) { alert("Enter your name!"); return; }
 
-  if(scores.length === 0){
-    const li = document.createElement("li");
-    li.textContent = "Пока нет результатов";
-    leaderboardList.appendChild(li);
-    return;
-  }
-
-  scores.slice(0,5).forEach(score => {
-    const li = document.createElement("li");
-    li.textContent = score + " кликов";
-    leaderboardList.appendChild(li);
+  await db.collection("leaderboard").add({
+    name: name,
+    score: count,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
-}
 
-saveButton.addEventListener("click", () => {
-  let scores = JSON.parse(localStorage.getItem("scores")) || [];
-  scores.push(count);
-  scores.sort((a,b) => b - a);
-  localStorage.setItem("scores", JSON.stringify(scores));
+  alert("Saved!");
   loadLeaderboard();
   count = 0;
   clickCountElem.textContent = 0;
 });
 
-loadLeaderboard();
+// ===== Load Leaderboard =====
+async function loadLeaderboard() {
+  leaderboardList.innerHTML = "Loading...";
+  const querySnapshot = await db.collection("leaderboard")
+    .orderBy("score","desc")
+    .limit(5)
+    .get();
 
-// ===== ТЕМА =====
-const themeButton = document.getElementById("themeToggle");
+  leaderboardList.innerHTML = "";
+  if (querySnapshot.empty) {
+    leaderboardList.innerHTML = "<li>No scores yet</li>";
+    return;
+  }
 
-if (localStorage.getItem("theme") === "light") {
-  document.body.classList.add("light-theme");
-  themeButton.textContent = "🌑 Тёмная тема";
+  querySnapshot.forEach(doc => {
+    const data = doc.data();
+    const li = document.createElement("li");
+    li.textContent = `${data.name} — ${data.score} clicks`;
+    leaderboardList.appendChild(li);
+  });
 }
 
-themeButton.addEventListener("click", () => {
-  document.body.classList.toggle("light-theme");
-
-  if (document.body.classList.contains("light-theme")) {
-    localStorage.setItem("theme", "light");
-    themeButton.textContent = "🌑 Тёмная тема";
-  } else {
-    localStorage.setItem("theme", "dark");
-    themeButton.textContent = "🌙 Светлая тема";
-  }
-});
+// Load leaderboard on start
+loadLeaderboard();
 </script>
 
 </body>
 </html>
-

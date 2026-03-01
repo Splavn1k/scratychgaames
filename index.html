@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scratch Games + Clicker Challenge</title>
-
 <style>
 body {
   font-family: Arial, sans-serif;
   background: #111;
   color: white;
   padding: 20px;
+  transition: background 0.3s, color 0.3s;
 }
 button {
   padding: 12px;
@@ -38,11 +38,26 @@ input {
 .games a:hover {
   text-decoration: underline;
 }
+
+/* Светлая тема */
+.light-theme {
+  background: white;
+  color: black;
+}
+.light-theme .games a {
+  color: darkblue;
+}
+.light-theme button {
+  background: #8f8;
+  color: black;
+}
 </style>
 </head>
 <body>
 
 <h1>🔥 Scratch Games + Clicker Challenge</h1>
+
+<button id="themeToggle">🌙 Сменить тему</button>
 
 <!-- Игры -->
 <div class="games">
@@ -64,12 +79,12 @@ input {
   <ol id="leaderboardList"></ol>
 </div>
 
-<!-- Firebase SDK (compat version) -->
+<!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ====== Firebase Configuration ======
+// ===== Firebase config =====
 const firebaseConfig = {
   apiKey: "AIzaSyATCCc_waIdUupeRVla1VGA8koZKLEC9GY",
   authDomain: "scratychgaaming.firebaseapp.com",
@@ -80,9 +95,8 @@ const firebaseConfig = {
   measurementId: "G-JQ9YZSBNS2"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(); // ← обязательно, чтобы db был определён
+const db = firebase.firestore();
 
 // ===== Click Counter =====
 let count = 0;
@@ -93,13 +107,9 @@ const colors = ['orange','red','yellow','pink','lime','cyan','magenta','white'];
 clickButton.addEventListener("click", () => {
   count++;
   clickCountElem.textContent = count;
-
-  // Случайный цвет кнопки
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
   clickButton.style.backgroundColor = randomColor;
-  setTimeout(() => {
-    clickButton.style.backgroundColor = 'lime';
-  }, 400);
+  setTimeout(() => clickButton.style.backgroundColor = 'lime', 400);
 });
 
 // ===== Save Score =====
@@ -145,8 +155,14 @@ async function loadLeaderboard() {
   });
 }
 
-// Load leaderboard on start
 loadLeaderboard();
+
+// ===== Theme Toggle =====
+const themeToggle = document.getElementById("themeToggle");
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+  themeToggle.textContent = document.body.classList.contains("light-theme") ? "🌙 Тёмная тема" : "☀️ Светлая тема";
+});
 </script>
 
 </body>

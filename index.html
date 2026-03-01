@@ -121,12 +121,10 @@ button:active {
 </div>
 
 <script>
-
 // ===== СЧЁТЧИК С ЦВЕТОМ =====
 let count = 0;
 const clickCountElem = document.getElementById('clickCount');
 const clickButton = document.getElementById('clickButton');
-
 const colors = ['orange','red','yellow','pink','lime','cyan','magenta'];
 
 clickButton.addEventListener('click', () => {
@@ -149,8 +147,53 @@ function loadLeaderboard() {
   const scores = JSON.parse(localStorage.getItem("scores")) || [];
   leaderboardList.innerHTML = "";
 
+  if(scores.length === 0){
+    const li = document.createElement("li");
+    li.textContent = "Пока нет результатов";
+    leaderboardList.appendChild(li);
+    return;
+  }
+
   scores.slice(0,5).forEach(score => {
     const li = document.createElement("li");
     li.textContent = score + " кликов";
     leaderboardList.appendChild(li);
   });
+}
+
+saveButton.addEventListener("click", () => {
+  let scores = JSON.parse(localStorage.getItem("scores")) || [];
+  scores.push(count);
+  scores.sort((a,b) => b - a);
+  localStorage.setItem("scores", JSON.stringify(scores));
+  loadLeaderboard();
+  count = 0;
+  clickCountElem.textContent = 0;
+});
+
+loadLeaderboard();
+
+// ===== ТЕМА =====
+const themeButton = document.getElementById("themeToggle");
+
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light-theme");
+  themeButton.textContent = "🌑 Тёмная тема";
+}
+
+themeButton.addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+
+  if (document.body.classList.contains("light-theme")) {
+    localStorage.setItem("theme", "light");
+    themeButton.textContent = "🌑 Тёмная тема";
+  } else {
+    localStorage.setItem("theme", "dark");
+    themeButton.textContent = "🌙 Светлая тема";
+  }
+});
+  
+</script>
+
+</body>
+</html>

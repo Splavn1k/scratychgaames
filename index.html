@@ -41,6 +41,8 @@ button {
   margin-top: 10px;
   border-radius: 8px;
   font-size: 16px;
+  position: relative;
+  overflow: hidden;
   transition: background-color 0.3s ease, transform 0.1s;
 }
 
@@ -71,6 +73,21 @@ button:active {
   padding: 15px;
   background: #111;
   border-radius: 10px;
+}
+
+/* +1 анимация */
+.plusOne {
+  position: absolute;
+  color: white;
+  font-weight: bold;
+  pointer-events: none;
+  animation: moveUp 0.8s ease-out forwards;
+  font-size: 18px;
+}
+
+@keyframes moveUp {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-40px); }
 }
 
 @media (max-width: 600px) {
@@ -121,22 +138,37 @@ button:active {
 </div>
 
 <script>
-// ===== СЧЁТЧИК С ЦВЕТОМ =====
+// ===== СЧЁТЧИК С ЦВЕТОМ И +1 =====
 let count = 0;
 const clickCountElem = document.getElementById('clickCount');
 const clickButton = document.getElementById('clickButton');
-const colors = ['orange','red','yellow','pink','lime','cyan','magenta'];
+const colors = ['orange','red','yellow','pink','lime','cyan','magenta','white'];
 
-clickButton.addEventListener('click', () => {
+clickButton.addEventListener('click', (e) => {
   count++;
   clickCountElem.textContent = count;
 
+  // Случайный цвет кнопки
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
   clickButton.style.backgroundColor = randomColor;
 
   setTimeout(() => {
     clickButton.style.backgroundColor = 'lime';
-  }, 300);
+  }, 400);
+
+  // +1 анимация
+  const plus = document.createElement('span');
+  plus.className = 'plusOne';
+  plus.textContent = '+1';
+  clickButton.appendChild(plus);
+
+  // позиционируем в центре кнопки
+  plus.style.left = (clickButton.clientWidth/2 - 10) + 'px';
+  plus.style.top = '0px';
+
+  setTimeout(() => {
+    plus.remove();
+  }, 800);
 });
 
 // ===== ЛИДЕРБОРД =====
@@ -192,8 +224,8 @@ themeButton.addEventListener("click", () => {
     themeButton.textContent = "🌙 Светлая тема";
   }
 });
-  
 </script>
 
 </body>
 </html>
+

@@ -12,6 +12,7 @@ body {
   padding: 20px;
   transition: background 0.3s, color 0.3s;
 }
+
 button {
   padding: 12px;
   margin: 8px 0;
@@ -20,36 +21,49 @@ button {
   background: lime;
   border: none;
   border-radius: 8px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
 }
+
 input {
   font-size: 16px;
   padding: 8px;
 }
-.leaderboard {
-  margin-top: 20px;
-}
+
 .games a {
   color: cyan;
   display: block;
   margin: 8px 0;
   text-decoration: none;
+  transition: color 0.3s;
 }
+
 .games a:hover {
   text-decoration: underline;
 }
 
-/* Светлая тема */
+.leaderboard {
+  margin-top: 20px;
+}
+
+/* ===== Светлая тема ===== */
 .light-theme {
   background: white;
   color: black;
 }
+
 .light-theme .games a {
   color: darkblue;
 }
+
 .light-theme button {
   background: #8f8;
   color: black;
+}
+
+.light-theme input {
+  background: #eee;
+  color: black;
+  border: 1px solid #ccc;
 }
 </style>
 </head>
@@ -57,7 +71,8 @@ input {
 
 <h1>🔥 Scratch Games + Clicker Challenge</h1>
 
-<button id="themeToggle">🌙 Сменить тему</button>
+<!-- Кнопка смены темы -->
+<button id="themeToggle">☀️ Светлая тема</button>
 
 <!-- Игры -->
 <div class="games">
@@ -84,7 +99,7 @@ input {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ===== Firebase config =====
+// ===== Firebase Configuration =====
 const firebaseConfig = {
   apiKey: "AIzaSyATCCc_waIdUupeRVla1VGA8koZKLEC9GY",
   authDomain: "scratychgaaming.firebaseapp.com",
@@ -107,8 +122,11 @@ const colors = ['orange','red','yellow','pink','lime','cyan','magenta','white'];
 clickButton.addEventListener("click", () => {
   count++;
   clickCountElem.textContent = count;
+
+  // Случайный цвет кнопки
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
   clickButton.style.backgroundColor = randomColor;
+
   setTimeout(() => clickButton.style.backgroundColor = 'lime', 400);
 });
 
@@ -161,7 +179,13 @@ loadLeaderboard();
 const themeToggle = document.getElementById("themeToggle");
 themeToggle.addEventListener("click", () => {
   document.body.classList.toggle("light-theme");
-  themeToggle.textContent = document.body.classList.contains("light-theme") ? "🌙 Тёмная тема" : "☀️ Светлая тема";
+
+  // Меняем текст кнопки
+  if(document.body.classList.contains("light-theme")) {
+    themeToggle.textContent = "🌙 Тёмная тема";
+  } else {
+    themeToggle.textContent = "☀️ Светлая тема";
+  }
 });
 </script>
 

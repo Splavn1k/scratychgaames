@@ -1,90 +1,129 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Мои проекты Scratch</title>
-  <style>
-    body {
-      background: black;
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 25px;
-    }
-    .title {
-      color: #5C6AC4;
-    }
-    button {
-      padding: 10px 15px;
-      background: lime;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      transition: background-color 0.3s ease;
-    }
-    button img {
-      width: 30px;
-      height: auto;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Мои проекты Scratch</title>
+
+<style>
+body {
+  background: black;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 25px;
+  transition: 0.3s;
+}
+
+.title {
+  color: #5C6AC4;
+}
+
+/* Светлая тема */
+.light-theme {
+  background: white;
+  color: black;
+}
+
+.light-theme a {
+  color: darkblue;
+}
+
+button {
+  padding: 10px 15px;
+  background: lime;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+</style>
+
 </head>
 <body>
-  <h1 class="title">Scratch Games!</h1>
-  <p id="currentTime"></p>
 
-  <h2>Счётчик кликов: <span id="clickCount">0</span></h2>
-  
-  <button id="clickButton">
-    Нажми меня!
-  </button>
+<h1 class="title">Scratch Games!</h1>
 
-  <ul>
-    <li>
-      <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank" style="color: blue;">
-        dodje from a ball
-      </a>
-    </li>
-    <li>
-      <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank" style="color: blue;">
-        ghoul want eeeeat
-      </a>
-    </li>
-  </ul>
+<button id="themeToggle">🌙 Сменить тему</button>
 
-  <script> 
-    // Показываем текущее время
-    function showTime() {
-      document.getElementById('currentTime').textContent = new Date().toUTCString();
-    }
-    showTime();
-    setInterval(showTime, 1000);
+<p id="currentTime"></p>
 
-    let count = 0;
-    const clickCountElem = document.getElementById('clickCount');
-    const clickButton = document.getElementById('clickButton');
+<h2>Счётчик кликов: <span id="clickCount">0</span></h2>
 
-    const colors = ['orange', 'red', 'yellow', 'pink', 'lime', 'cyan', 'magenta'];
+<button id="clickButton">
+  Нажми меня!
+</button>
 
-    clickButton.addEventListener('click', () => {
-      count++;
-      clickCountElem.textContent = count;
+<ul>
+  <li>
+    <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank">
+      dodge from a ball
+    </a>
+  </li>
+  <li>
+    <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank">
+      ghoul want eeeeat
+    </a>
+  </li>
+</ul>
 
-      // Выбираем случайный цвет из массива
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      clickButton.style.backgroundColor = randomColor;
+<script>
 
-      // Возвращаем исходный цвет через 300 миллисекунд
-      setTimeout(() => {
-        clickButton.style.backgroundColor = 'lime';
-      }, 300);
-    });
-  </script>
+// ===== Часы =====
+function showTime() {
+  document.getElementById('currentTime').textContent =
+    "UTC время: " + new Date().toUTCString();
+}
+showTime();
+setInterval(showTime, 1000);
+
+
+// ===== Счётчик кликов =====
+let count = 0;
+const clickCountElem = document.getElementById('clickCount');
+const clickButton = document.getElementById('clickButton');
+
+const colors = ['orange', 'red', 'yellow', 'pink', 'lime', 'cyan', 'magenta'];
+
+clickButton.addEventListener('click', () => {
+  count++;
+  clickCountElem.textContent = count;
+
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+  clickButton.style.backgroundColor = randomColor;
+
+  setTimeout(() => {
+    clickButton.style.backgroundColor = 'lime';
+  }, 300);
+});
+
+
+// ===== Переключение темы =====
+const themeButton = document.getElementById("themeToggle");
+
+// Проверка сохранённой темы
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light-theme");
+  themeButton.textContent = "🌑 Тёмная тема";
+}
+
+themeButton.addEventListener("click", () => {
+  document.body.classList.toggle("light-theme");
+
+  if (document.body.classList.contains("light-theme")) {
+    localStorage.setItem("theme", "light");
+    themeButton.textContent = "🌑 Тёмная тема";
+  } else {
+    localStorage.setItem("theme", "dark");
+    themeButton.textContent = "🌙 Светлая тема";
+  }
+});
+
+</script>
+
 </body>
 </html>
-
-
 

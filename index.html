@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Мои проекты Scratch</title>
+<title>Scratch Games + Click Challenge</title>
 
 <style>
 body {
@@ -14,15 +14,19 @@ body {
   transition: 0.3s;
 }
 
-.title {
+h1 {
   color: #5C6AC4;
-  font-size: 32px;
 }
 
 /* Светлая тема */
 .light-theme {
   background: white;
   color: black;
+}
+
+.light-theme .games,
+.light-theme .leaderboard {
+  background: #eee;
 }
 
 .light-theme a {
@@ -34,90 +38,91 @@ button {
   background: lime;
   border: none;
   cursor: pointer;
-  font-size: 16px;
   margin-top: 10px;
-  transition: background-color 0.3s ease, transform 0.1s;
   border-radius: 8px;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.1s;
 }
 
 button:active {
   transform: scale(0.95);
 }
 
-ul {
-  margin-top: 20px;
+.games {
+  margin-top: 25px;
+  padding: 15px;
+  background: #111;
+  border-radius: 10px;
 }
 
-a {
+.games a {
   color: cyan;
   text-decoration: none;
+  display: block;
+  margin: 8px 0;
 }
 
-a:hover {
+.games a:hover {
   text-decoration: underline;
 }
 
-/* 📱 АДАПТИВНОСТЬ */
-@media (max-width: 600px) {
+.leaderboard {
+  margin-top: 25px;
+  padding: 15px;
+  background: #111;
+  border-radius: 10px;
+}
 
+@media (max-width: 600px) {
   body {
     padding: 15px;
   }
-
-  .title {
+  h1 {
     font-size: 24px;
   }
-
   button {
     width: 100%;
     font-size: 18px;
   }
-
   h2 {
     font-size: 20px;
   }
 }
-
 </style>
 </head>
 <body>
 
-<h1 class="title">Scratch Games!</h1>
+<h1>🔥 Scratch Games + Click Challenge</h1>
 
 <button id="themeToggle">🌙 Сменить тему</button>
 
-<p id="currentTime"></p>
+<!-- ===== ТВОИ ИГРЫ ===== -->
+<div class="games">
+  <h2>🎮 Мои проекты</h2>
 
-<h2>Счётчик кликов: <span id="clickCount">0</span></h2>
+  <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank">
+    dodge from a ball
+  </a>
 
-<button id="clickButton">
-  Нажми меня!
-</button>
+  <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank">
+    ghoul want eeeeat
+  </a>
+</div>
 
-<ul>
-  <li>
-    <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank">
-      dodge from a ball
-    </a>
-  </li>
-  <li>
-    <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank">
-      ghoul want eeeeat
-    </a>
-  </li>
-</ul>
+<!-- ===== КЛИК ЧЕЛЛЕНДЖ ===== -->
+<h2>Клики: <span id="clickCount">0</span></h2>
+<button id="clickButton">Нажми меня!</button>
+<button id="saveScore">💾 Сохранить результат</button>
+
+<!-- ===== ЛИДЕРБОРД ===== -->
+<div class="leaderboard">
+  <h3>🏆 Лидерборд (Топ 5)</h3>
+  <ol id="leaderboardList"></ol>
+</div>
 
 <script>
 
-// Часы
-function showTime() {
-  document.getElementById('currentTime').textContent =
-    "UTC время: " + new Date().toUTCString();
-}
-showTime();
-setInterval(showTime, 1000);
-
-// Счётчик
+// ===== СЧЁТЧИК С ЦВЕТОМ =====
 let count = 0;
 const clickCountElem = document.getElementById('clickCount');
 const clickButton = document.getElementById('clickButton');
@@ -136,7 +141,34 @@ clickButton.addEventListener('click', () => {
   }, 300);
 });
 
-// Тема
+// ===== ЛИДЕРБОРД =====
+const saveButton = document.getElementById("saveScore");
+const leaderboardList = document.getElementById("leaderboardList");
+
+function loadLeaderboard() {
+  const scores = JSON.parse(localStorage.getItem("scores")) || [];
+  leaderboardList.innerHTML = "";
+
+  scores.slice(0,5).forEach(score => {
+    const li = document.createElement("li");
+    li.textContent = score + " кликов";
+    leaderboardList.appendChild(li);
+  });
+}
+
+saveButton.addEventListener("click", () => {
+  let scores = JSON.parse(localStorage.getItem("scores")) || [];
+  scores.push(count);
+  scores.sort((a,b) => b - a);
+  localStorage.setItem("scores", JSON.stringify(scores));
+  loadLeaderboard();
+  count = 0;
+  clickCountElem.textContent = 0;
+});
+
+loadLeaderboard();
+
+// ===== ТЕМА =====
 const themeButton = document.getElementById("themeToggle");
 
 if (localStorage.getItem("theme") === "light") {

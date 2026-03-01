@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Мои проекты Scratch</title>
 
 <style>
@@ -15,6 +16,7 @@ body {
 
 .title {
   color: #5C6AC4;
+  font-size: 32px;
 }
 
 /* Светлая тема */
@@ -28,20 +30,55 @@ body {
 }
 
 button {
-  padding: 10px 15px;
+  padding: 12px 18px;
   background: lime;
   border: none;
   cursor: pointer;
   font-size: 16px;
   margin-top: 10px;
   transition: background-color 0.3s ease, transform 0.1s;
+  border-radius: 8px;
 }
 
 button:active {
   transform: scale(0.95);
 }
-</style>
 
+ul {
+  margin-top: 20px;
+}
+
+a {
+  color: cyan;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 📱 АДАПТИВНОСТЬ */
+@media (max-width: 600px) {
+
+  body {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  button {
+    width: 100%;
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+}
+
+</style>
 </head>
 <body>
 
@@ -72,7 +109,7 @@ button:active {
 
 <script>
 
-// ===== Часы =====
+// Часы
 function showTime() {
   document.getElementById('currentTime').textContent =
     "UTC время: " + new Date().toUTCString();
@@ -80,13 +117,12 @@ function showTime() {
 showTime();
 setInterval(showTime, 1000);
 
-
-// ===== Счётчик кликов =====
+// Счётчик
 let count = 0;
 const clickCountElem = document.getElementById('clickCount');
 const clickButton = document.getElementById('clickButton');
 
-const colors = ['orange', 'red', 'yellow', 'pink', 'lime', 'cyan', 'magenta'];
+const colors = ['orange','red','yellow','pink','lime','cyan','magenta'];
 
 clickButton.addEventListener('click', () => {
   count++;
@@ -100,11 +136,9 @@ clickButton.addEventListener('click', () => {
   }, 300);
 });
 
-
-// ===== Переключение темы =====
+// Тема
 const themeButton = document.getElementById("themeToggle");
 
-// Проверка сохранённой темы
 if (localStorage.getItem("theme") === "light") {
   document.body.classList.add("light-theme");
   themeButton.textContent = "🌑 Тёмная тема";
@@ -126,4 +160,3 @@ themeButton.addEventListener("click", () => {
 
 </body>
 </html>
-

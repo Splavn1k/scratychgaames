@@ -4,66 +4,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scratch Games + Clicker Challenge</title>
+
 <style>
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #111;
   color: white;
   padding: 20px;
-  transition: background 0.3s, color 0.3s;
+  transition: 0.3s;
 }
 
-button {
-  padding: 12px;
-  margin: 8px 0;
-  font-size: 18px;
-  cursor: pointer;
-  background: lime;
-  border: none;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-input {
-  font-size: 16px;
-  padding: 8px;
-}
-
-.games a {
-  color: cyan;
-  display: block;
-  margin: 8px 0;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.games a:hover {
-  text-decoration: underline;
-}
-
-.leaderboard {
-  margin-top: 20px;
-}
-
-/* ===== Светлая тема ===== */
 .light-theme {
   background: white;
   color: black;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#clickButton {
+  background: lime;
+}
+
+#donateBtn {
+  background: gold;
+  font-weight: bold;
+}
+
+#donateBtn:hover {
+  transform: scale(1.05);
+}
+
+.games a {
+  display: block;
+  margin: 5px 0;
+  color: cyan;
 }
 
 .light-theme .games a {
   color: darkblue;
 }
 
-.light-theme button {
-  background: #8f8;
-  color: black;
-}
-
-.light-theme input {
-  background: #eee;
-  color: black;
-  border: 1px solid #ccc;
+input {
+  padding: 6px 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #888;
 }
 </style>
 </head>
@@ -71,35 +64,41 @@ input {
 
 <h1>🔥 Scratch Games + Clicker Challenge</h1>
 
-<!-- Кнопка смены темы -->
-<button id="themeToggle">☀️ Светлая тема</button>
+<button onclick="toggleTheme()">🌙 Toggle Theme</button>
 
-<!-- Игры -->
+<hr>
+
+<h2>🎮 My Scratch Projects</h2>
 <div class="games">
-  <h2>🎮 My Projects</h2>
   <a href="https://scratch.mit.edu/projects/1266117577/" target="_blank">dodge from a ball</a>
   <a href="https://scratch.mit.edu/projects/1277330031/" target="_blank">ghoul want eeeeat</a>
 </div>
 
-<!-- Clicker -->
+<hr>
+
 <h2>Clicks: <span id="clickCount">0</span></h2>
 <button id="clickButton">Click Me!</button>
-<br>
+
+<br><br>
+
 <input id="playerName" placeholder="Enter your name" maxlength="15">
-<button id="saveScore">💾 Save Score</button>
+<button onclick="saveScore()">💾 Save Score</button>
 
-<!-- Leaderboard -->
-<div class="leaderboard">
-  <h2>🏆 Global Top 5</h2>
-  <ol id="leaderboardList"></ol>
-</div>
+<h2>🏆 Global Top 5</h2>
+<ol id="leaderboard"></ol>
 
-<!-- Firebase SDK (compat) -->
+<br>
+
+<a href="https://send.monobank.ua/jar/4BZo5dCw6Z" target="_blank">
+  <button id="donateBtn">💛 Support the Project</button>
+</a>
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ===== Firebase Configuration =====
+// ===== Firebase Config =====
 const firebaseConfig = {
   apiKey: "AIzaSyATCCc_waIdUupeRVla1VGA8koZKLEC9GY",
   authDomain: "scratychgaaming.firebaseapp.com",
@@ -110,83 +109,72 @@ const firebaseConfig = {
   measurementId: "G-JQ9YZSBNS2"
 };
 
+// Инициализация Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ===== Click Counter =====
+// ===== Clicker =====
 let count = 0;
-const clickCountElem = document.getElementById("clickCount");
+const clickCount = document.getElementById("clickCount");
 const clickButton = document.getElementById("clickButton");
-const colors = ['orange','red','yellow','pink','lime','cyan','magenta','white'];
+const colors = ['orange','red','yellow','pink','lime','cyan','magenta'];
 
 clickButton.addEventListener("click", () => {
   count++;
-  clickCountElem.textContent = count;
+  clickCount.textContent = count;
 
-  // Случайный цвет кнопки
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
   clickButton.style.backgroundColor = randomColor;
 
-  setTimeout(() => clickButton.style.backgroundColor = 'lime', 400);
+  setTimeout(() => clickButton.style.backgroundColor = "lime", 300);
 });
+
+// ===== Theme Toggle =====
+function toggleTheme() {
+  document.body.classList.toggle("light-theme");
+}
 
 // ===== Save Score =====
-const saveButton = document.getElementById("saveScore");
-const playerNameInput = document.getElementById("playerName");
-const leaderboardList = document.getElementById("leaderboardList");
-
-saveButton.addEventListener("click", async () => {
-  const name = playerNameInput.value.trim();
+async function saveScore() {
+  const name = document.getElementById("playerName").value.trim();
   if (!name) { alert("Enter your name!"); return; }
 
-  await db.collection("leaderboard").add({
-    name: name,
-    score: count,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  alert("Saved!");
-  loadLeaderboard();
-  count = 0;
-  clickCountElem.textContent = 0;
-});
+  try {
+    await db.collection("leaderboard").add({
+      name: name,
+      score: count,
+      created: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    alert("Score saved!");
+    count = 0;
+    clickCount.textContent = 0;
+    loadLeaderboard();
+  } catch(err) {
+    alert("Error saving: " + err);
+  }
+}
 
 // ===== Load Leaderboard =====
 async function loadLeaderboard() {
-  leaderboardList.innerHTML = "Loading...";
-  const querySnapshot = await db.collection("leaderboard")
+  const list = document.getElementById("leaderboard");
+  list.innerHTML = "Loading...";
+
+  const snapshot = await db.collection("leaderboard")
     .orderBy("score","desc")
     .limit(5)
     .get();
 
-  leaderboardList.innerHTML = "";
-  if (querySnapshot.empty) {
-    leaderboardList.innerHTML = "<li>No scores yet</li>";
-    return;
-  }
-
-  querySnapshot.forEach(doc => {
+  list.innerHTML = "";
+  snapshot.forEach(doc => {
     const data = doc.data();
     const li = document.createElement("li");
-    li.textContent = `${data.name} — ${data.score} clicks`;
-    leaderboardList.appendChild(li);
+    li.textContent = data.name + " — " + data.score;
+    list.appendChild(li);
   });
 }
 
+// Load leaderboard on start
 loadLeaderboard();
-
-// ===== Theme Toggle =====
-const themeToggle = document.getElementById("themeToggle");
-themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("light-theme");
-
-  // Меняем текст кнопки
-  if(document.body.classList.contains("light-theme")) {
-    themeToggle.textContent = "🌙 Тёмная тема";
-  } else {
-    themeToggle.textContent = "☀️ Светлая тема";
-  }
-});
 </script>
 
 </body>
